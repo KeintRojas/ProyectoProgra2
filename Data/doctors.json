@@ -1,0 +1,13 @@
+{
+    "doctors": [{
+    "employeeId": 1,
+    "name": "Juan Rojas Torres",
+    "specialty": "Psiquiatría"
+    },
+    {
+    "employeeId": 2,
+    "name": "María Campos Vega",
+    "specialty": "Geriatría"
+    } ]
+}
+    

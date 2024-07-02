@@ -7,6 +7,7 @@ const app = express()
 // Importar módulo cors
 const cors = require('cors')
 
+
 // Se habilita la interpretación de json desde la app express
 app.use(express.json())
 app.use(cors())

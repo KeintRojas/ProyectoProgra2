@@ -9,6 +9,8 @@ const Joi = require('joi')
 module.exports = router
 
 const doctors = require('../Data/doctors.json')
+const utilities = require('./utilities')
+const { error } = require('console')
 
 router.get('/', (req, resp) => {
     console.log(req.url)
@@ -24,3 +26,33 @@ router.get('/:id', (req, resp) => {
     // Envía el array courses
     resp.send(doctor)
 })
+
+router.post('/',(req, resp) => {
+
+    const schema = Joi.object({
+        name: Joi.string().min(1).required(),
+        specialty: Joi.string().min(1).required()
+    })
+
+    const {error} = schema.validate(req.body)
+    console.log(error)
+
+    if(error) return resp.status(400).send(error.details[0].message)
+    const doctor = {
+        employeeId: utilities.increase(doctors.doctors.length),
+        name: req.body.name,
+        specialty: req.body.specialty
+    }   
+
+    doctors.doctors.push(doctor)
+    utilities.jsonWriterFile('./Data/doctors2.json',doctors)
+    resp.send(doctor)
+}) 
+
+function validateDoctor(doctor){
+    const schema = Joi.object({
+        name: Joi.string().min(1).required(),
+        specialty: Joi.string().min(1).required()
+    })
+    return schema.validate(course)
+}

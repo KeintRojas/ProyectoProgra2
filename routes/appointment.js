@@ -15,3 +15,4 @@ router.get('/', (req, resp) => {
     // Envía el array courses
     resp.send(appointments)
 })
+

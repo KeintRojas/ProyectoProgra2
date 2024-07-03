@@ -12,7 +12,7 @@ const patients = require('../Data/patients.json')
 
 router.get('/', (req, resp) => {
     console.log(req.url)
-    // Envía el array courses
+    // Envía el array
     resp.send(patients)
 })
 
@@ -21,6 +21,6 @@ router.get('/:id', (req, resp) => {
     const patient = patients.patients.find(p => p.id === parseInt(req.params.id))
     console.log(patient)
     if (!patient) return resp.status(404).send(`El paciente con el id ${req.params.id} no existe`)
-    // Envía el array courses
+    // Envía el paciente
     resp.send(patient)
 })

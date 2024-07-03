@@ -15,7 +15,7 @@ const utilities = require('./utilities')
 
 router.get('/', (req, resp) => {
     console.log(req.url)
-    // Envía el array courses
+    
     const appointment = appointments.appointment.sort((a, b) => {
         const dateA = new Date(`${a.date}T${a.hour}`)
         const dateB = new Date(`${b.date}T${b.hour}`)
@@ -29,7 +29,7 @@ router.get('/patients/:id', (req, resp) => {
     const appointment = appointments.appointment.filter(a => a.patient === parseInt(req.params.id))
     console.log(appointment)
     if (appointment.length === 0) return resp.status(404).send(`El paciente con el id ${req.params.id} no tiene citas programadas`)
-    // Envía el array courses
+   
     appointment.sort((a, b) => {
         const dateA = new Date(`${a.date}T${a.hour}`)
         const dateB = new Date(`${b.date}T${b.hour}`)
@@ -43,7 +43,7 @@ router.get('/doctor/:id', (req, resp) => {
     const appointment = appointments.appointment.filter(a => a.employeeId === parseInt(req.params.id))
     console.log(appointment)
     if (appointment.length === 0) return resp.status(404).send(`El doctor con el id ${req.params.id} no tiene citas programadas`)
-    // Envía el array courses
+    
     appointment.sort((a, b) => {
         const dateA = new Date(`${a.date}T${a.hour}`)
         const dateB = new Date(`${b.date}T${b.hour}`)
@@ -95,6 +95,33 @@ router.post('/', (req, resp) => {
     }
 
     appointments.appointment.push(appointment)
-    utilities.jsonWriterFile('./Data/appointment2.json', appointments)
+    utilities.jsonWriterFile('./Data/appointment.json', appointments)
     resp.send(appointment)
+})
+
+router.delete('/', (req, resp) => {
+    console.log(req.url)
+    const schema = Joi.object({
+        employeeId: Joi.required(),
+        patient: Joi.required(),
+        date: Joi.string().min(10).required(),
+        hour: Joi.string().min(5).required()
+    })
+
+    const {error} = schema.validate(req.body)
+    console.log(error)
+    if(error) return resp.status(400).send(error.details[0].message)
+
+    const existAppointment = appointments.appointment.find(a => 
+        a.employeeId === req.body.employeeId && 
+        a.date === req.body.date && 
+        a.hour === req.body.hour &&
+        a.state === "active"
+    )
+    console.log(existAppointment)
+    if (!existAppointment) return resp.status(400).send('No se existe la cita a cancelar o anteriormente fue cancelada');
+    
+    existAppointment.state = "canceled"
+    utilities.jsonWriterFile('./Data/appointment.json', appointments)
+    resp.send(existAppointment)
 })

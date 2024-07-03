@@ -17,7 +17,6 @@ app.set('json spaces', 2) // Formato de JSON
 app.set('port', process.env.port || 3000)
 
 // Importar las rutas
-app.use('/api/courses', require('./routes/courses'))
 app.use('/api/patients', require('./routes/patient'))
 app.use('/api/doctors', require('./routes/doctors'))
 app.use('/api/appointments', require('./routes/appointment'))

@@ -16,7 +16,12 @@ const utilities = require('./utilities')
 router.get('/', (req, resp) => {
     console.log(req.url)
     // Envía el array courses
-    resp.send(appointments)
+    const appointment = appointments.appointment.sort((a, b) => {
+        const dateA = new Date(`${a.date}T${a.hour}`)
+        const dateB = new Date(`${b.date}T${b.hour}`)
+        return dateA - dateB
+    })
+    resp.send(appointment)
 })
 
 router.get('/patients/:id', (req, resp) => {
@@ -25,6 +30,11 @@ router.get('/patients/:id', (req, resp) => {
     console.log(appointment)
     if (appointment.length === 0) return resp.status(404).send(`El paciente con el id ${req.params.id} no tiene citas programadas`)
     // Envía el array courses
+    appointment.sort((a, b) => {
+        const dateA = new Date(`${a.date}T${a.hour}`)
+        const dateB = new Date(`${b.date}T${b.hour}`)
+        return dateA - dateB
+    })
     resp.send(appointment)
 })
 
@@ -34,6 +44,11 @@ router.get('/doctor/:id', (req, resp) => {
     console.log(appointment)
     if (appointment.length === 0) return resp.status(404).send(`El doctor con el id ${req.params.id} no tiene citas programadas`)
     // Envía el array courses
+    appointment.sort((a, b) => {
+        const dateA = new Date(`${a.date}T${a.hour}`)
+        const dateB = new Date(`${b.date}T${b.hour}`)
+        return dateA - dateB
+    })
     resp.send(appointment)
 })
 
@@ -47,8 +62,31 @@ router.post('/', (req, resp) => {
     console.log(patient)
     if (!patient) return resp.status(404).send(`El paciente con el id ${req.body.patient} no existe`)
     
+    const schema = Joi.object({
+        employeeId: Joi.required(),
+        patient: Joi.required(),
+        date: Joi.string().min(10).required(),
+        hour: Joi.string().min(5).required()
+    })
+
+    const {error} = schema.validate(req.body)
+    console.log(error)
+    if(error) return resp.status(400).send(error.details[0].message)
+
+    const appointmentDate = new Date(`${req.body.date}T${req.body.hour}`);
+    const now = new Date();
+    if (appointmentDate <= now) return resp.status(400).send('La fecha y hora deben ser posteriores a la actual');
+    
+    const existAppointment = appointments.appointment.find(a => 
+        a.employeeId === req.body.employeeId && 
+        a.date === req.body.date && 
+        a.hour === req.body.hour &&
+        a.state === "active"
+    );
+    if (existAppointment) return resp.status(400).send('La cita ya está ocupada por otro paciente');
+
     const appointment = {
-        employeeId: utilities.increase(doctors.doctors.length),
+        employeeId: req.body.employeeId,
         date: req.body.date,
         patient: req.body.date,
         hour: req.body.hour,

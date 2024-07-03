@@ -9,9 +9,10 @@ const Joi = require('joi')
 module.exports = router
 
 const doctors = require('../Data/doctors.json')
-const appointments = require('../Data/appointment2.json')
+const appointments = require('../Data/appointment.json')
 const utilities = require('./utilities')
 const { error } = require('console')
+const { CANCELLED } = require('dns')
 
 router.get('/', (req, resp) => {
     console.log(req.url)
@@ -46,7 +47,7 @@ router.post('/',(req, resp) => {
     }   
 
     doctors.doctors.push(doctor)
-    utilities.jsonWriterFile('./Data/doctors2.json',doctors)
+    utilities.jsonWriterFile('./Data/doctors.json',doctors)
     resp.send(doctor)
 }) 
 
@@ -55,13 +56,14 @@ router.delete('/:id', (req, resp) => {
     const doctor = doctors.doctors.find(d => d.employeeId === parseInt(req.params.id))
     console.log(doctor)
     if (!doctor) return resp.status(404).send(`El doctor con el id ${req.params.id} no existe`)
+
+    const appointment = appointments.appointment.filter(a => a.employeeId === parseInt(req.params.id))
+    console.log(appointment)
+    if (appointment.length === 0) return resp.status(404).send(`El doctor con el id ${req.params.id} no tiene citas programadas`)
+    
+    appointment.forEach(a => a.state = "canceled")
+    
+    utilities.jsonWriterFile('./Data/appointment.json', appointments)
+    resp.send(`Se han cancelado todas las citas del doctor con el id ${req.params.id}`)
     
 })
-
-function validateDoctor(doctor){
-    const schema = Joi.object({
-        name: Joi.string().min(1).required(),
-        specialty: Joi.string().min(1).required()
-    })
-    return schema.validate(course)
-}

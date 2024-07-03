@@ -17,7 +17,7 @@
     {
       "employeeId": 1,
       "date": "2024-07-18",
-      "patient": "2024-07-18",
+      "patient": 207850965,
       "hour": "10:00",
       "state": "active"
     }

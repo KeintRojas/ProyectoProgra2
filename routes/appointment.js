@@ -82,13 +82,14 @@ router.post('/', (req, resp) => {
         a.date === req.body.date && 
         a.hour === req.body.hour &&
         a.state === "active"
-    );
+    )
+    console.log(existAppointment)
     if (existAppointment) return resp.status(400).send('La cita ya está ocupada por otro paciente');
 
     const appointment = {
         employeeId: req.body.employeeId,
         date: req.body.date,
-        patient: req.body.date,
+        patient: req.body.patient,
         hour: req.body.hour,
         state: "active"
     }

@@ -1,0 +1,25 @@
+{
+  "appointment": [
+    {
+      "employeeId": 1,
+      "date": "2024-06-17",
+      "patient": 207850965,
+      "hour": "08:00",
+      "state": "active"
+    },
+    {
+      "employeeId": 1,
+      "date": "2024-06-18",
+      "patient": 207850965,
+      "hour": "10:00",
+      "state": "canceled"
+    },
+    {
+      "employeeId": 5,
+      "date": "2024-07-18",
+      "patient": "2024-07-18",
+      "hour": "10:00",
+      "state": "active"
+    }
+  ]
+}

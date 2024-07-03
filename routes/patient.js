@@ -20,7 +20,7 @@ router.get('/:id', (req, resp) => {
     console.log(req.url)
     const patient = patients.patients.find(p => p.id === parseInt(req.params.id))
     console.log(patient)
-    if (!patient) return resp.status(404).send(`El curso con el id ${req.params.id} no existe`)
+    if (!patient) return resp.status(404).send(`El paciente con el id ${req.params.id} no existe`)
     // Envía el array courses
     resp.send(patient)
 })

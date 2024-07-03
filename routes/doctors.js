@@ -9,6 +9,7 @@ const Joi = require('joi')
 module.exports = router
 
 const doctors = require('../Data/doctors.json')
+const appointments = require('../Data/appointment2.json')
 const utilities = require('./utilities')
 const { error } = require('console')
 
@@ -22,7 +23,7 @@ router.get('/:id', (req, resp) => {
     console.log(req.url)
     const doctor = doctors.doctors.find(d => d.employeeId === parseInt(req.params.id))
     console.log(doctor)
-    if (!doctor) return resp.status(404).send(`El curso con el id ${req.params.id} no existe`)
+    if (!doctor) return resp.status(404).send(`El doctor con el id ${req.params.id} no existe`)
     // Envía el array courses
     resp.send(doctor)
 })
@@ -48,6 +49,14 @@ router.post('/',(req, resp) => {
     utilities.jsonWriterFile('./Data/doctors2.json',doctors)
     resp.send(doctor)
 }) 
+
+router.delete('/:id', (req, resp) => {
+    console.log(req.url)
+    const doctor = doctors.doctors.find(d => d.employeeId === parseInt(req.params.id))
+    console.log(doctor)
+    if (!doctor) return resp.status(404).send(`El doctor con el id ${req.params.id} no existe`)
+    
+})
 
 function validateDoctor(doctor){
     const schema = Joi.object({

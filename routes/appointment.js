@@ -15,7 +15,6 @@ const utilities = require('./utilities')
 
 router.get('/', (req, resp) => {
     console.log(req.url)
-    
     const appointment = appointments.appointment.sort((a, b) => {
         const dateA = new Date(`${a.date}T${a.hour}`)
         const dateB = new Date(`${b.date}T${b.hour}`)
@@ -26,24 +25,52 @@ router.get('/', (req, resp) => {
 
 router.get('/patients/:id', (req, resp) => {
     console.log(req.url)
-    const appointment = appointments.appointment.filter(a => a.patient === parseInt(req.params.id))
+
+    const patient = patients.patients.find(p => p.id === parseInt(req.params.id))
+    console.log(patient)
+    if (!patient) return resp.status(404).send(`El paciente con el id ${req.params.id} no existe`)
+    let appointment = appointments.appointment.filter(a => a.patient === parseInt(req.params.id))
     console.log(appointment)
     if (appointment.length === 0) return resp.status(404).send(`El paciente con el id ${req.params.id} no tiene citas programadas`)
-   
+
+    appointment = appointment.map(appointment => {
+        const doctor = doctors.doctors.find(d => d.employeeId === appointment.employeeId);
+        return {
+            ...appointment,
+            doctorName: doctor.name,
+            doctorSpecialty: doctor.specialty
+        };
+    });
+
     appointment.sort((a, b) => {
         const dateA = new Date(`${a.date}T${a.hour}`)
         const dateB = new Date(`${b.date}T${b.hour}`)
         return dateA - dateB
     })
+
     resp.send(appointment)
 })
 
 router.get('/doctor/:id', (req, resp) => {
     console.log(req.url)
-    const appointment = appointments.appointment.filter(a => a.employeeId === parseInt(req.params.id))
+
+    const doctor = doctors.doctors.find(d => d.employeeId === parseInt(req.params.id))
+    console.log(doctor)
+    if (!doctor) return resp.status(404).send(`El doctor con el id ${req.params.id} no existe`)
+
+    let appointment = appointments.appointment.filter(a => a.employeeId === parseInt(req.params.id))
     console.log(appointment)
     if (appointment.length === 0) return resp.status(404).send(`El doctor con el id ${req.params.id} no tiene citas programadas`)
-    
+
+    appointment = appointment.map(appointment => {
+        const patient = patients.patients.find(p =>  p.id === appointment.patient);
+        return {
+            ...appointment,
+            patientName: patient.name,
+            patientCellphone: patient.phone
+        };
+    });
+
     appointment.sort((a, b) => {
         const dateA = new Date(`${a.date}T${a.hour}`)
         const dateB = new Date(`${b.date}T${b.hour}`)

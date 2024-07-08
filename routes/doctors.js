@@ -17,7 +17,8 @@ const { CANCELLED } = require('dns')
 router.get('/', (req, resp) => {
     console.log(req.url)
     // Envía el array courses
-    resp.send(doctors)
+    doctor = doctors.doctors
+    resp.send(doctor)
 })
 
 router.get('/:id', (req, resp) => {

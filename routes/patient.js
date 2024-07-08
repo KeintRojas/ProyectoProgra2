@@ -13,7 +13,8 @@ const patients = require('../Data/patients.json')
 router.get('/', (req, resp) => {
     console.log(req.url)
     // Envía el array
-    resp.send(patients)
+    patient = patients.patients
+    resp.send(patient)
 })
 
 router.get('/:id', (req, resp) => {
